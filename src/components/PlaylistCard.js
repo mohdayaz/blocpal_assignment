@@ -1,7 +1,4 @@
 import { useDrag } from 'react-dnd';
-import { useDispatch, useSelector } from 'react-redux';
-import { _setMyPlayList } from '../Model';
-import { _setMyList } from '../store/actions';
 
 const PlaylistCard = (props) =>  {
 
@@ -24,7 +21,7 @@ const PlaylistCard = (props) =>  {
     return (<div ref={drag} className='card' role="box" data-testid={`box-${props.data.id}`}>
 		<div className='left'>
             <p className='s_no'>{props.key_name}</p>
-            <img src={props.data.images[0].url}/>
+            <img src={props.data.images[0].url} alt="playlist"/>
             <p className='name'>{props.data.name}</p>
         </div>
         <p className='description'>{props.data.description.substring(0, 36)+ (props.data.description.length > 36 ? "..." : "")}</p>
