@@ -11,17 +11,38 @@ import { useDispatch, useSelector } from "react-redux"
 const Content = () => {
     const dispatch = useDispatch();
 
-    const { _genreData, _suggestedList, _myPlayList } = useSelector(state => ({
-        _genreData: state.playlistReducer._genreData,
-        _suggestedList: state.playlistReducer._suggestedList,
-        _myPlayList: state.playlistReducer._myPlayList
-    }))
+    const _genreData = useSelector(state  => state.playlistReducer._genreData)
+    const _suggestedList = useSelector(state  => state.playlistReducer._suggestedList)
+    const _myPlayList = useSelector(state  => state.playlistReducer._myPlayList)
 
     const [genreName, setGenreName] = useState("")
+    const [suggestedListState, setsuggestedListState] = useState([])
+    const [selectedIndex, setSelectedIndex] = useState("")
+    const [refreshList, setrefreshList] = useState("")
     
     useEffect(() => {
         getGenreData()
     }, [])
+
+    useEffect(() => {
+        if(refreshList){
+            let previousList = [..._myPlayList]
+            const data = _suggestedList[selectedIndex]
+            console.log("data.name", selectedIndex, _suggestedList, suggestedListState);
+            const isIdAlreadyExist = previousList.some(e => e.id === data.id);
+            if(isIdAlreadyExist){
+            alert("its already added");
+            }else{
+            previousList.push(data)
+            dispatch(_setMyList(previousList));
+            }
+            setrefreshList(false)
+        }
+    }, [refreshList])
+
+    useEffect(() => {
+        setsuggestedListState(_suggestedList)
+    }, [_suggestedList])
 
     const getGenreData = async () => {
         //setgere
@@ -40,16 +61,13 @@ const Content = () => {
         setGenreName(name)
     }
 
-    const handleMyList = (data) => {
-        let previousList = [..._myPlayList]
-        debugger
-        const isIdAlreadyExist = previousList.some(e => e.id === data.id);
-        if(isIdAlreadyExist){
-            alert("its already added");
-        }else{
-            previousList.push(data)
-            dispatch(_setMyList(previousList));
-        }
+    const handleMyList = (index) => {
+        setSelectedIndex(index)
+        setrefreshList(true)
+    }
+
+    const getAnother = () => {
+        console.log("ddd",_suggestedList, suggestedListState)
     }
 
     const deletePlaylist = id => {
@@ -63,7 +81,7 @@ const Content = () => {
         <SelectGenre data={_genreData} handlePlaylist={(id, name) => getPlaylist(id, name)}/>
         <div className='container playlist_container'>
             <p className="title">Top 5 {genreName} Playlist</p>
-			{_suggestedList.map((e,i) => <PlaylistCard key_name={i+1} data={e} handleMyList={(data) => handleMyList(data)}/>)}
+			{suggestedListState.map((e,i) => <PlaylistCard xyz={i} key_name={i+1} data={e} handleMyList={(index) => handleMyList(index)}/>)}
 		</div>
 		<MyPlaylist data={[..._myPlayList]} deletePlaylist={id => deletePlaylist(id)}/>
     </div>

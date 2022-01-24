@@ -1,14 +1,14 @@
 import { useDrag } from 'react-dnd';
 
 const PlaylistCard = (props) =>  {
-
     const [{ isDragging }, drag] = useDrag(() => ({
         type: "box",
-        item: { id: props.data.id },
+        item: {name: props.xyz},
         end: (item, monitor) => {
             const dropResult = monitor.getDropResult();
             if (item && dropResult) {
-                props.handleMyList(props.data)
+                props.handleMyList(item.name)
+                //console.log("trigger", item)
             }
         },
         collect: (monitor) => ({
@@ -18,7 +18,7 @@ const PlaylistCard = (props) =>  {
     }));
     //const opacity = isDragging ? 0.4 : 1;
 
-    return (<div ref={drag} className='card' role="box" data-testid={`box-${props.data.id}`}>
+    return (<div ref={drag} className='card' role="box" data-testid={`box-${props.xyz}`}>
 		<div className='left'>
             <p className='s_no'>{props.key_name}</p>
             <img src={props.data.images[0].url} alt="playlist"/>
